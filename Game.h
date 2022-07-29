@@ -22,6 +22,7 @@ class Game
 	void messageWon();
 	void messageLose();
 	void printLetterError();
+	bool isRepeatErrorLetter(char ch);
 	
 public:
 	Game(Word* word, int maxAttempts = 6);

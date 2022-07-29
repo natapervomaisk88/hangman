@@ -16,7 +16,7 @@ Game::~Game()
 		delete this->word;
 }
 
-char Game::defaultChar = '#';
+char Game::defaultChar = '_';
 
 void Game::fillRealField(char letter)
 {
@@ -54,6 +54,7 @@ void Game::showCurrentField()
 void Game::fillLetter(char letter) //заполнение буквы
 {
 	vector<int> index;
+	bool success = false;
 	if (isLetter(letter))
 	{
 		for (size_t i = 0; i < this->word->getWord().length(); i++)
@@ -61,10 +62,14 @@ void Game::fillLetter(char letter) //заполнение буквы
 			if (letter == this->word->getWord()[i])
 			{
 				this->realSituation.at(i) = letter;
+				success = true;
 			}
 		}
 	}
-	this->countAttempts--;
+	if (!success)
+	{
+		this->countAttempts--;
+	}
 }
 
 void Game::inputLetter()
@@ -73,6 +78,18 @@ void Game::inputLetter()
 	char ch;
 	cin >> ch;
 	this->fillLetter(ch);
+}
+
+bool Game::isRepeatErrorLetter(char ch)
+{
+	for (auto letter : this->errorLetter)
+	{
+		if (letter == ch)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Game::isLetter(char ch)
@@ -85,7 +102,10 @@ bool Game::isLetter(char ch)
 			return true;
 		}
 	}
-	this->errorLetter.push_back(ch);
+	if (!isRepeatErrorLetter(ch))
+	{
+		this->errorLetter.push_back(ch);
+	}
 	this->messageError();
 	this->printLetterError();
 	return false;

@@ -4,6 +4,29 @@ Word::Word()
 	this->choiceWord();
 }
 
+string Word::parse(string str)
+{
+	vector<string> arr;
+	string delim(" ");
+	size_t prev = 0;
+	size_t next;
+	size_t delta = delim.length();
+
+	while ((next = str.find(delim, prev)) != string::npos) {
+		//Отладка-start
+		string tmp = str.substr(prev, next - prev);
+		//Отладка-end
+		arr.push_back(str.substr(prev, next - prev));
+		prev = next + delta;
+	}
+	string word;
+	for (auto l : arr)
+	{
+		word.push_back(static_cast<char>(stoi(l)));
+	}
+	return word;
+}
+
 //возьмём массив слов и закодируем их
 void Word::createWords()
 {
@@ -54,25 +77,48 @@ bool Word::saveToFile(vector<vector<int>> vec)
 	return false;
 }
 
+void Word::inputWords()
+{
+	int count;
+	cout << "Enter count word:";
+	cin >> count;
+	cin.ignore();
+	while (count)
+	{
+		string str;
+		cout << "Enter word:";
+		getline(cin, str);
+		this->words.push_back(str);
+		count--;
+	}
+}
+
 void Word::choiceWord()
 {
 	ifstream fin;
 	int countWords = 0;
 	fin.open(this->path);
+	if (fin.fail())
+	{
+		cout << "Word file not found\n";
+		int choice;
+		cout << "Generate word file - 0\nUse words from array - 1\n";
+		cin >> choice;
+		cout << "Let's start creating a file\n";
+		if (choice)
+		{
+			this->createWords();
+		}
+		else
+		{
+			this->inputWords();
+		}
+		this->saveToFile(this->crypto());
+		fin.open(this->path);
+	}
 	if (fin.is_open())
 	{
 		string str;
-		while (getline(fin, str))
-		{
-			countWords++;
-		}
-		if (countWords == 0)
-		{
-			cout << "Word file not found\n";
-			cout << "Let's start creating a file\n";
-			this->createWords();
-			this->saveToFile(this->crypto());
-		}
 		while (getline(fin, str))
 		{
 			countWords++;
@@ -81,8 +127,12 @@ void Word::choiceWord()
 		fin.close();
 		fin.open(path);
 		//fin.seekg(0, fin.beg);
-		srand(time(0));
-		int indexWord = rand() % countWords;
+		int indexWord = 0;
+		do
+		{
+			srand(time(0));
+			indexWord = rand() % countWords;
+		} while (indexWord == 0);
 		bool findWord = false;
 		int count = 1;
 		vector<int> vec;
