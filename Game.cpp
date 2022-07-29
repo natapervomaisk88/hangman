@@ -117,8 +117,10 @@ void Game::startGame()
 	cout << "your word has " << this->word->getWord().length() << " letters\n";
 	this->fillRealField();
 	this->showCurrentField();
+	int count = 0;
 	do
 	{
+		count++;
 		cout << "Guess the word... \n";
 		this->inputLetter();
 		this->showCurrentField();
@@ -133,7 +135,7 @@ void Game::startGame()
 		this->messageLose();
 	}
 	cout << "Word: " << this->word->getWord() << endl;
-	cout << "Attempts: " << this->maxAttempts - this->getCountAttempts() << endl;
+	cout << "Attempts: " << count << endl;
 }
 
 int Game::getCountAttempts()
